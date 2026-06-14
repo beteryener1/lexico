@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelime Kartları — Türkçe / İspanyolca</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0f0f13;
+    --surface:   #1a1a22;
+    --border:    #2a2a38;
+    --accent:    #c084fc;
+    --accent2:   #818cf8;
+    --text:      #e2e0f0;
+    --muted:     #6b6880;
+    --green:     #4ade80;
+    --red:       #f87171;
+    --yellow:    #fbbf24;
+    --radius:    12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+
+  .tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #0f0f13;
+  }
+
+  /* PANELS */
+  .panel { display: none; width: 100%; max-width: 560px; }
+  .panel.active { display: flex; flex-direction: column; gap: 16px; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+  }
+
+  /* ADD WORD */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 0.8rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field input, .field select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 1rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+
+  .btn {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #0f0f13; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: transparent; border: 1px solid var(--red); color: var(--red); font-size: 0.8rem; padding: 6px 12px; }
+  .btn-danger:hover { background: var(--red); color: #0f0f13; }
+
+  /* WORD LIST */
+  .word-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .word-row:last-child { border-bottom: none; }
+  .word-tr { font-weight: 600; flex: 1; }
+  .word-es { color: var(--accent); flex: 1; font-style: italic; }
+  .word-meta { font-size: 0.75rem; color: var(--muted); }
+  .badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-isim   { background: #1e3a5f; color: #60a5fa; }
+  .badge-fiil   { background: #1a3b2a; color: #4ade80; }
+  .badge-sıfat  { background: #3b1a3a; color: var(--accent); }
+  .badge-diğer  { background: #2a2a38; color: var(--muted); }
+
+  /* QUIZ */
+  .quiz-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .quiz-prompt-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .quiz-word { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--text); }
+  .quiz-type { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+
+  .quiz-input-row { display: flex; gap: 8px; }
+  .quiz-input-row input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 1rem;
+    padding: 10px 14px;
+    outline: none;
+  }
+  .quiz-input-row input:focus { border-color: var(--accent); }
+
+  .result-box {
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .result-correct { background: #14291f; border: 1px solid var(--green); color: var(--green); }
+  .result-wrong   { background: #2b1414; border: 1px solid var(--red);   color: var(--red); }
+  .result-wrong .correct-ans { color: var(--text); font-size: 0.9rem; margin-top: 4px; }
+
+  .quiz-stats {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .quiz-stats span b { color: var(--text); }
+
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; transition: width 0.4s; }
+
+  .empty-state { text-align: center; color: var(--muted); padding: 40px 0; font-size: 0.95rem; }
+
+  .due-badge {
+    font-size: 0.7rem;
+    background: var(--accent);
+    color: #0f0f13;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+
+  .sr-level { display: flex; gap: 2px; }
+  .sr-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+  .sr-dot.filled { background: var(--accent); }
+
+  /* STATS PANEL */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--accent); }
+  .stat-lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Kelime Kartları</h1>
+  <p>Türkçe → İspanyolca · Aralıklı tekrar</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('add')">Kelime Ekle</button>
+  <button class="tab" onclick="switchTab('list')">Liste</button>
+  <button class="tab" onclick="switchTab('quiz')">Test <span id="due-count"></span></button>
+  <button class="tab" onclick="switchTab('stats')">İstatistik</button>
+</div>
+
+<!-- ADD PANEL -->
+<div class="panel active" id="panel-add">
+  <div class="card">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div class="field">
+        <label>Türkçe</label>
+        <input id="inp-tr" type="text" placeholder="köpek" />
+      </div>
+      <div class="field">
+        <label>İspanyolca</label>
+        <input id="inp-es" type="text" placeholder="perro" />
+      </div>
+      <div class="field">
+        <label>Kelime türü</label>
+        <select id="inp-type">
+          <option value="isim">İsim</option>
+          <option value="fiil">Fiil</option>
+          <option value="sıfat">Sıfat</option>
+          <option value="diğer">Diğer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Örnek cümle (isteğe bağlı)</label>
+        <input id="inp-ex" type="text" placeholder="El perro es grande." />
+      </div>
+      <button class="btn btn-primary" onclick="addWord()">Kaydet</button>
+      <div id="add-msg" style="font-size:0.85rem; color:var(--green); text-align:center; min-height:20px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST PANEL -->
+<div class="panel" id="panel-list">
+  <div class="card">
+    <div id="word-list-content"></div>
+  </div>
+</div>
+
+<!-- QUIZ PANEL -->
+<div class="panel" id="panel-quiz">
+  <div id="quiz-container"></div>
+</div>
+
+<!-- STATS PANEL -->
+<div class="panel" id="panel-stats">
+  <div class="card">
+    <div class="stats-grid" id="stats-grid"></div>
+  </div>
+  <div class="card" id="weak-words-card"></div>
+</div>
+
+<script>
+// ─── Storage ────────────────────────────────────────────────────────────────
+const STORE_KEY = 'kelime_kartlari_v2';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch { return []; }
+}
+
+function save(data) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+}
+
+// ─── Spaced Repetition (SM-2 lite) ──────────────────────────────────────────
+// interval levels: 0=new, 1=1d, 2=3d, 3=7d, 4=14d, 5=30d, 6=∞
+const INTERVALS = [0, 1, 3, 7, 14, 30, 9999];
+
+function isDue(word) {
+  if (!word.nextReview) return true;
+  return Date.now() >= word.nextReview;
+}
+
+function updateSR(word, correct) {
+  if (correct) {
+    word.level = Math.min((word.level || 0) + 1, INTERVALS.length - 1);
+    word.streak = (word.streak || 0) + 1;
+  } else {
+    word.level = Math.max(0, (word.level || 0) - 1);
+    word.streak = 0;
+    word.errors = (word.errors || 0) + 1;
+  }
+  const days = INTERVALS[word.level];
+  word.nextReview = Date.now() + days * 86400000;
+  word.lastReviewed = Date.now();
+  return word;
+}
+
+// ─── Tab switching ───────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const names = ['add','list','quiz','stats'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'list')  renderList();
+  if (name === 'quiz')  renderQuiz();
+  if (name === 'stats') renderStats();
+  updateDueBadge();
+}
+
+function updateDueBadge() {
+  const words = load();
+  const n = words.filter(isDue).length;
+  const el = document.getElementById('due-count');
+  el.innerHTML = n > 0 ? `<span class="due-badge">${n}</span>` : '';
+}
+
+// ─── Add Word ────────────────────────────────────────────────────────────────
+function addWord() {
+  const tr   = document.getElementById('inp-tr').value.trim();
+  const es   = document.getElementById('inp-es').value.trim();
+  const type = document.getElementById('inp-type').value;
+  const ex   = document.getElementById('inp-ex').value.trim();
+  const msg  = document.getElementById('add-msg');
+
+  if (!tr || !es) { msg.style.color='var(--red)'; msg.textContent='Türkçe ve İspanyolca alanları zorunlu.'; return; }
+
+  const words = load();
+  words.push({ id: Date.now(), tr, es, type, ex, level: 0, streak: 0, errors: 0, nextReview: null, added: Date.now() });
+  save(words);
+
+  document.getElementById('inp-tr').value = '';
+  document.getElementById('inp-es').value = '';
+  document.getElementById('inp-ex').value = '';
+  msg.style.color = 'var(--green)';
+  msg.textContent = `"${tr}" eklendi ✓`;
+  setTimeout(() => msg.textContent = '', 2000);
+  updateDueBadge();
+}
+
+document.getElementById('inp-es').addEventListener('keydown', e => { if (e.key === 'Enter') addWord(); });
+
+// ─── Word List ───────────────────────────────────────────────────────────────
+function renderList() {
+  const words = load();
+  const el = document.getElementById('word-list-content');
+  if (!words.length) { el.innerHTML = '<div class="empty-state">Henüz kelime eklenmedi.</div>'; return; }
+
+  el.innerHTML = words.slice().reverse().map(w => `
+    <div class="word-row">
+      <div class="word-tr">${w.tr}</div>
+      <div class="word-es">${w.es}</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="badge badge-${w.type}">${w.type}</span>
+        <div class="sr-level">${[0,1,2,3,4,5].map(i => `<div class="sr-dot ${(w.level||0)>i?'filled':''}"></div>`).join('')}</div>
+        <button class="btn btn-danger" onclick="deleteWord(${w.id})">Sil</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteWord(id) {
+  if (!confirm('Bu kelimeyi silmek istiyor musun?')) return;
+  save(load().filter(w => w.id !== id));
+  renderList();
+  updateDueBadge();
+}
+
+// ─── Quiz ────────────────────────────────────────────────────────────────────
+let quizState = { queue: [], index: 0, correct: 0, answered: false };
+
+function renderQuiz() {
+  const words = load();
+  const due = words.filter(isDue);
+  const el = document.getElementById('quiz-container');
+
+  if (!words.length) {
+    el.innerHTML = '<div class="card empty-state">Önce kelime ekle.</div>'; return;
+  }
+  if (!due.length) {
+    const next = Math.min(...words.map(w => w.nextReview || Infinity));
+    const h = Math.ceil((next - Date.now()) / 3600000);
+    el.innerHTML = `<div class="card empty-state">Tüm kelimeler öğrenildi 🎉<br><span style="font-size:0.85rem;color:var(--muted)">Sonraki tekrar yaklaşık ${h} saat sonra.</span></div>`; return;
+  }
+
+  // shuffle
+  quizState.queue = due.sort(() => Math.random() - 0.5);
+  quizState.index = 0;
+  quizState.correct = 0;
+  quizState.answered = false;
+  showQuestion();
+}
+
+function showQuestion() {
+  const el = document.getElementById('quiz-container');
+  const { queue, index, correct } = quizState;
+
+  if (index >= queue.length) {
+    // done
+    const total = queue.length;
+    el.innerHTML = `
+      <div class="card quiz-card">
+        <div class="quiz-prompt-label">Tur tamamlandı</div>
+        <div class="quiz-word" style="font-size:3rem;">🎯</div>
+        <div style="font-size:1.1rem;">${correct} / ${total} doğru</div>
+        <div style="color:var(--muted); font-size:0.85rem;">${Math.round(correct/total*100)}% başarı</div>
+        <button class="btn btn-primary" style="margin-top:12px;" onclick="renderQuiz()">Tekrar Başlat</button>
+      </div>`;
+    return;
+  }
+
+  const word = queue[index];
+  const pct = Math.round(index / queue.length * 100);
+
+  el.innerHTML = `
+    <div class="progress-bar" style="margin-bottom:8px;">
+      <div class="progress-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="quiz-stats" style="margin-bottom:16px;">
+      <span>${index + 1} / ${queue.length}</span>
+      <span>✓ <b>${correct}</b></span>
+    </div>
+    <div class="card quiz-card" style="margin-bottom:16px;">
+      <div class="quiz-prompt-label">Türkçe</div>
+      <div class="quiz-word">${word.tr}</div>
+      <div class="quiz-type">${word.type}${word.ex ? ' · ' + word.ex : ''}</div>
+    </div>
+    <div class="quiz-input-row">
+      <input id="quiz-ans" type="text" placeholder="İspanyolca karşılığı..." autofocus />
+      <button class="btn btn-primary" onclick="checkAnswer()">Kontrol</button>
+    </div>
+    <div id="quiz-result" style="margin-top:12px;"></div>
+  `;
+
+  document.getElementById('quiz-ans').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (!quizState.answered) checkAnswer();
+      else nextWord();
+    }
+  });
+  document.getElementById('quiz-ans').focus();
+}
+
+function normalize(s) {
+  return s.trim().toLowerCase()
+    .replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i').replace(/ó/g,'o').replace(/ú/g,'u').replace(/ü/g,'u').replace(/ñ/g,'n');
+}
+
+function checkAnswer() {
+  if (quizState.answered) return;
+  const ans = document.getElementById('quiz-ans').value;
+  const word = quizState.queue[quizState.index];
+  const correct = normalize(ans) === normalize(word.es);
+
+  quizState.answered = true;
+  if (correct) quizState.correct++;
+
+  // update SR
+  const words = load();
+  const idx = words.findIndex(w => w.id === word.id);
+  if (idx !== -1) { words[idx] = updateSR(words[idx], correct); save(words); }
+
+  const resultEl = document.getElementById('quiz-result');
+  if (correct) {
+    resultEl.innerHTML = `<div class="result-box result-correct">✓ Doğru!</div>`;
+  } else {
+    resultEl.innerHTML = `<div class="result-box result-wrong">✗ Yanlış<div class="correct-ans">Doğru: <b>${word.es}</b></div></div>`;
+  }
+
+  // change button
+  document.querySelector('.quiz-input-row .btn').textContent = 'Sonraki →';
+  document.querySelector('.quiz-input-row .btn').onclick = nextWord;
+  document.getElementById('quiz-ans').disabled = true;
+}
+
+function nextWord() {
+  quizState.index++;
+  quizState.answered = false;
+  showQuestion();
+}
+
+// ─── Stats ───────────────────────────────────────────────────────────────────
+function renderStats() {
+  const words = load();
+  const total = words.length;
+  const mastered = words.filter(w => (w.level||0) >= 5).length;
+  const due = words.filter(isDue).length;
+  const totalErrors = words.reduce((s,w) => s + (w.errors||0), 0);
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Toplam kelime</div></div>
+    <div class="stat-box"><div class="stat-num">${due}</div><div class="stat-lbl">Test bekliyor</div></div>
+    <div class="stat-box"><div class="stat-num">${mastered}</div><div class="stat-lbl">Öğrenildi (lv 5+)</div></div>
+    <div class="stat-box"><div class="stat-num">${totalErrors}</div><div class="stat-lbl">Toplam hata</div></div>
+  `;
+
+  const weak = words.filter(w => (w.errors||0) > 0).sort((a,b) => b.errors - a.errors).slice(0,5);
+  const weakEl = document.getElementById('weak-words-card');
+  if (weak.length) {
+    weakEl.innerHTML = `<div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">En çok hatalı kelimeler</div>`
+      + weak.map(w => `<div class="word-row"><div class="word-tr">${w.tr}</div><div class="word-es">${w.es}</div><div style="color:var(--red);font-size:0.85rem;">${w.errors} hata</div></div>`).join('');
+  } else {
+    weakEl.innerHTML = '<div class="empty-state">Henüz hata yok 🎉</div>';
+  }
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+updateDueBadge();
+</script>
+</body>
+</html>
