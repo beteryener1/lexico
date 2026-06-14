@@ -234,7 +234,7 @@
 
 <header>
   <h1>Kelime Kartları</h1>
-  <p>Türkçe → İspanyolca · Aralıklı tekrar</p>
+  <p>İspanyolca → Türkçe · Aralıklı tekrar</p>
 </header>
 
 <div class="tabs">
@@ -249,12 +249,12 @@
   <div class="card">
     <div style="display:flex; flex-direction:column; gap:14px;">
       <div class="field">
-        <label>Türkçe</label>
-        <input id="inp-tr" type="text" placeholder="köpek" />
-      </div>
-      <div class="field">
         <label>İspanyolca</label>
         <input id="inp-es" type="text" placeholder="perro" />
+      </div>
+      <div class="field">
+        <label>Türkçe</label>
+        <input id="inp-tr" type="text" placeholder="köpek" />
       </div>
       <div class="field">
         <label>Kelime türü</label>
@@ -376,7 +376,7 @@ function addWord() {
   updateDueBadge();
 }
 
-document.getElementById('inp-es').addEventListener('keydown', e => { if (e.key === 'Enter') addWord(); });
+document.getElementById('inp-tr').addEventListener('keydown', e => { if (e.key === 'Enter') addWord(); });
 
 // ─── Word List ───────────────────────────────────────────────────────────────
 function renderList() {
@@ -459,12 +459,12 @@ function showQuestion() {
       <span>✓ <b>${correct}</b></span>
     </div>
     <div class="card quiz-card" style="margin-bottom:16px;">
-      <div class="quiz-prompt-label">Türkçe</div>
-      <div class="quiz-word">${word.tr}</div>
+      <div class="quiz-prompt-label">İspanyolca</div>
+      <div class="quiz-word">${word.es}</div>
       <div class="quiz-type">${word.type}${word.ex ? ' · ' + word.ex : ''}</div>
     </div>
     <div class="quiz-input-row">
-      <input id="quiz-ans" type="text" placeholder="İspanyolca karşılığı..." autofocus />
+      <input id="quiz-ans" type="text" placeholder="Türkçe karşılığı..." autofocus />
       <button class="btn btn-primary" onclick="checkAnswer()">Kontrol</button>
     </div>
     <div id="quiz-result" style="margin-top:12px;"></div>
@@ -488,7 +488,7 @@ function checkAnswer() {
   if (quizState.answered) return;
   const ans = document.getElementById('quiz-ans').value;
   const word = quizState.queue[quizState.index];
-  const correct = normalize(ans) === normalize(word.es);
+  const correct = normalize(ans) === normalize(word.tr);
 
   quizState.answered = true;
   if (correct) quizState.correct++;
@@ -502,7 +502,7 @@ function checkAnswer() {
   if (correct) {
     resultEl.innerHTML = `<div class="result-box result-correct">✓ Doğru!</div>`;
   } else {
-    resultEl.innerHTML = `<div class="result-box result-wrong">✗ Yanlış<div class="correct-ans">Doğru: <b>${word.es}</b></div></div>`;
+    resultEl.innerHTML = `<div class="result-box result-wrong">✗ Yanlış<div class="correct-ans">Doğru: <b>${word.tr}</b></div></div>`;
   }
 
   // change button
